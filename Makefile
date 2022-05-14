@@ -6,7 +6,7 @@
 #    By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/04 13:33:13 by bsavinel          #+#    #+#              #
-#    Updated: 2022/05/14 09:16:28 by bsavinel         ###   ########.fr        #
+#    Updated: 2022/05/14 10:48:57 by bsavinel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,14 +14,10 @@
 ########						Comilation Tools						########
 ################################################################################
 
-NAME = minishell
-NAME_TEST = minishell_test
+NAME = Wordle
 
 CC = c++
 CPPFLAGS =  -Wall -Wextra -Werror
-
-ARGUMENT_RUN = 
-ARGUMENT_RUN_TEST =
 
 ################################################################################
 ########							Sources 							########
@@ -31,13 +27,13 @@ SRCS_PATH 	=	srcs/
 
 INCS =	
 
-SRCS =	
+SRCS =	main.cpp
 
 ################################################################################
 ########							Libraries							########
 ################################################################################
 
-LIBS = libft/libft.a -lreadline
+LIBS = 
 
 ################################################################################
 ########						Objects/Dependences						########
@@ -74,7 +70,7 @@ header:
 		echo "${BLUE}"
 		echo "| |  | |             | | |     "
 		echo "| |  | | ___  _ __ __| | | ___ "
-		echo "| |/\| |/ _ \| '__/ _` | |/ _ \"
+		echo "| |/\| |/ _ \| '__/ _\` | |/ _ \\"
 		echo "\  /\  / (_) | | | (_| | |  __/"
 		echo " \/  \/ \___/|_|  \__,_|_|\___|"
 		echo "              by bsavinel and omoudni"
@@ -82,8 +78,8 @@ header:
 
 
 
-$(NAME) : header $(OBJS) $(LIBS)
-	$(CC) $(CPPFLAGS) $(OBJS) $(LIBS) -o $(NAME) $(INCS)
+$(NAME) : header $(OBJS)
+	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME) $(INCS)
 	echo "$(BLUE)$(NAME): $(GREEN)Success $(NO_COLOR)"
 
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp
@@ -92,22 +88,12 @@ $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp
 
 clean :
 	$(RM) $(OBJS_PATH)
-	$(MAKE) -C libft clean
 
 fclean : clean
 	$(RM) $(NAME) 
-	$(RM) $(NAME_TEST)
-	$(RM) libft/libft.a
 
 re : fclean 
 	 make all
-
-################################################################################
-#######							Rules for libs							########
-################################################################################
-
-libft/libft.a :
-	$(MAKE) -C libft all && echo "$(BLUE)Compiation of libft: $(GREEN)Success $(NO_COLOR)" || echo "$(BLUE)Compiation of libft: $(RED)Fail $(NO_COLOR)"
 
 -include $(DEPS)
 

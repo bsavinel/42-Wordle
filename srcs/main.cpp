@@ -6,7 +6,7 @@
 /*   By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-/*   Updated: 2022/05/14 17:28:02 by bsavinel         ###   ########.fr       */
+/*   Updated: 2022/05/14 17:56:51 by bsavinel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int string_all_lower(std::string line)
 void	ft_print_display(std::vector<std::string> tab)
 {
 	std::cout << " *************" << std::endl;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		std::cout << " * " << tab[i].c_str()  << " * " << std::endl;
 	}
@@ -182,7 +182,7 @@ void ft_game_loop(std::set<std::string> possible_words, std::vector<std::string>
 	nb_tours = 0;
 	hidden = win_words[rand() % (win_words.size() - 1)];
 	possible_words.insert(hidden);
-	while (nb_tours < 5)
+	while (nb_tours < 6)
 	{
 		ft_print_display(tab);
 		std::cout << "\nEnter a word (5 letters): ";
@@ -205,7 +205,7 @@ void ft_game_loop(std::set<std::string> possible_words, std::vector<std::string>
 		if (hidden == word)
 		{
 			ft_print_display(tab);
-			std::cout << GREENB << "\nCONGRATULATION : YOU WIN !!!!!!!" << RESET << std::endl;
+			std::cout << GREENB << "\nCONGRATULATION : You found the word in : " << nb_tours + 1 << " !!!!!!!!!" << RESET << std::endl;
 			return ;
 		}
 		nb_tours++;
@@ -277,5 +277,6 @@ int main(int ac, char **av)
 		std::cout << "No word in the dictionary" << std::endl;
 		return (1);
 	}
+	std::cout << "You can play : " << possible_words.size() << " words\nYou can find : " << win_words.size() << " words" << std::endl;
 	return (ft_game_loop(possible_words, win_words), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-/*   Updated: 2022/05/14 14:00:07 by bsavinel         ###   ########.fr       */
+/*   Updated: 2022/05/14 14:31:20 by bsavinel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,22 @@ int	ft_is_in_dico(std::set<std::string> possible_words, std::string word)
 	return (0);
 }
 
-void	ft_game_loop(std::set<std::string> possible_words, std::set<std::string> win_words)
+void	ft_print_display(std::vector<std::string> tab)
+{
+	std::cout << " *************" << std::endl;
+	for (int i = 0; i < 5; i++)
+	{
+		std::cout << " * " << tab[i] << std::endl << " * ";
+	}
+	std::cout << " *************" << std::endl;
+}
+
+void	ft_game_loop(std::set<std::string> possible_words, std::vector<std::string> win_words)
 {
 	int							nb_tours;
 	std::vector<std::string>	tab;
 	std::string					word;
+	std::string					hidden;
 
 	nb_tours = 0;
 	for (int i = 0; i < 6; i++)
@@ -56,27 +67,35 @@ void	ft_game_loop(std::set<std::string> possible_words, std::set<std::string> wi
 		tab.push_back("- - - - -");
 	}
 	nb_tours = 0;
+	hidden = win_words[rand() % (win_words.size() - 1)];
+	possible_words.insert(hidden);
 	while (nb_tours < 6)
 	{
 		ft_print_display(tab);
-		std::cout << "Enter a word (5 letters, lowercase): ";
+		std::cout << "\nEnter a word (5 letters, lowercase): ";
 		getline(std::cin, word);
 		if (word.size() != 5 || !ft_is_in_dico(possible_words, word))
 		{
 			std::cout << "Invalid word" << std::endl;
 			continue ;
 		}
-		tab[nb_tours] = ft_color_letters(word, widden);
+		tab[nb_tours] = ft_color_letters(word, hidden);
+		if (hidden == word)
+		{
+			ft_print_display(tab);
+			std::cout << "\nCONGRATULATION : YOU WIN !!!!!!!" << std::endl;
+			return ;
+		}l
 		nb_tours++;
 	}
-	
+	std::cout << "\nSory : you lose\n The word has :" << hidden << std::endl;
 }
 
 int main(int ac, char **av)
 {
 	std::ifstream				ifs;
 	std::string					line;
-	std::set<std::string>		win_words;
+	std::vector<std::string>	win_words;
 	std::set<std::string>		possible_words;
 	int							i;
 
@@ -128,7 +147,7 @@ int main(int ac, char **av)
 			std::cout << "Word : '" << line << "' is not vallid word" << std::endl;
 			return (1);
 		}
-		win_words.insert(line);
+		win_words.push_back(line);
 	}
 	ifs.close();
 	if (win_words.size() == 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omoudni <omoudni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-/*   Updated: 2022/05/14 14:00:07 by bsavinel         ###   ########.fr       */
+/*   Updated: 2022/05/14 14:43:11 by omoudni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@
 #define WHITE "\033[0;m"
 #define RESET "\033[0;m"
 
-int	string_all_lower(std::string line)
+int string_all_lower(std::string line)
 {
 	int i;
-	
+
 	i = 0;
 	while (i < 5)
 	{
@@ -37,18 +37,54 @@ int	string_all_lower(std::string line)
 	return (1);
 }
 
-int	ft_is_in_dico(std::set<std::string> possible_words, std::string word)
+int ft_is_in_dico(std::set<std::string> possible_words, std::string word)
 {
 	if (possible_words.find(word) != possible_words.end())
 		return (1);
 	return (0);
 }
 
-void	ft_game_loop(std::set<std::string> possible_words, std::set<std::string> win_words)
+int ft_letter_in_widden(std::string word, std::string widden, int i, int *found_already)
 {
-	int							nb_tours;
-	std::vector<std::string>	tab;
-	std::string					word;
+	int j;
+
+	j = 0;
+	while (widden[j])
+	{
+		if (widden[j] == word[i] && !*found_already)
+		{
+			*found_already = 1;
+			return (1);
+		}
+		j++;
+	}
+	return (0);
+}
+
+std::string ft_color_letters(std::string word, std::string widden)
+{
+	int i;
+	int found_already;
+	std::string res;
+
+	found_already = 0;
+	i = 0;
+	while (i < 5)
+	{
+		if (word[i] == widden[i])
+			res = res + GREEN + word[i] + RESET;
+		else if (ft_letter_in_widden(word, widden, i, &found_already))
+			res = res + YEL + word[i] + RESET;
+		i++;
+	}
+	return (res);
+}
+
+void ft_game_loop(std::set<std::string> possible_words, std::set<std::string> win_words)
+{
+	int nb_tours;
+	std::vector<std::string> tab;
+	std::string word;
 
 	nb_tours = 0;
 	for (int i = 0; i < 6; i++)
@@ -64,25 +100,24 @@ void	ft_game_loop(std::set<std::string> possible_words, std::set<std::string> wi
 		if (word.size() != 5 || !ft_is_in_dico(possible_words, word))
 		{
 			std::cout << "Invalid word" << std::endl;
-			continue ;
+			continue;
 		}
 		tab[nb_tours] = ft_color_letters(word, widden);
 		nb_tours++;
 	}
-	
 }
 
 int main(int ac, char **av)
 {
-	std::ifstream				ifs;
-	std::string					line;
-	std::set<std::string>		win_words;
-	std::set<std::string>		possible_words;
-	int							i;
+	std::ifstream ifs;
+	std::string line;
+	std::set<std::string> win_words;
+	std::set<std::string> possible_words;
+	int i;
 
-/* ************************************************************************** */
-/*					Put and check the dictionary in all words				  */
-/* ************************************************************************** */
+	/* ************************************************************************** */
+	/*					Put and check the dictionary in all words				  */
+	/* ************************************************************************** */
 
 	if (ac != 3)
 	{
@@ -90,7 +125,6 @@ int main(int ac, char **av)
 		return (1);
 	}
 
-	
 	ifs.open(av[1]);
 	if (!ifs)
 	{
@@ -113,8 +147,6 @@ int main(int ac, char **av)
 		return (1);
 	}
 
-
-	
 	ifs.open(av[2]);
 	if (!ifs)
 	{
@@ -136,6 +168,5 @@ int main(int ac, char **av)
 		std::cout << "No word in the dictionary" << std::endl;
 		return (1);
 	}
-	return(ft_game_loop(possible_words, win_words), 0);
+	return (ft_game_loop(possible_words, win_words), 0);
 }
-

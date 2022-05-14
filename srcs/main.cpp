@@ -6,7 +6,7 @@
 /*   By: omoudni <omoudni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-/*   Updated: 2022/05/14 14:43:11 by omoudni          ###   ########.fr       */
+/*   Updated: 2022/05/14 14:51:07 by omoudni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,22 @@ int ft_is_in_dico(std::set<std::string> possible_words, std::string word)
 	return (0);
 }
 
+int	ft_nbr_occurences(char c, std::string widden)
+{
+	int nbr;
+	int i;
+
+	nbr = 0;
+	i = 0;
+	while (widden[i])
+	{
+		if (widden[i] == c)
+			nbr++;
+		i++;
+	}
+	return (nbr);
+}
+
 int ft_letter_in_widden(std::string word, std::string widden, int i, int *found_already)
 {
 	int j;
@@ -51,9 +67,9 @@ int ft_letter_in_widden(std::string word, std::string widden, int i, int *found_
 	j = 0;
 	while (widden[j])
 	{
-		if (widden[j] == word[i] && !*found_already)
+		if (widden[j] == word[i] && *found_already <= ft_nbr_occurences(word[i], ft_letter_in_widden))
 		{
-			*found_already = 1;
+			*found_already++;
 			return (1);
 		}
 		j++;

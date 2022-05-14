@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoudni <omoudni@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2022/05/14 14:31:20 by bsavinel         ###   ########.fr       */
-=======
-/*   Updated: 2022/05/14 14:51:07 by omoudni          ###   ########.fr       */
->>>>>>> 54e4a5afe4b1e1b3fb152566c74be0159cc7fb52
+/*   Updated: 2022/05/14 17:10:29 by bsavinel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +17,21 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <time.h>
+#include <cctype>
 
-#define GREEN "\033[92;m"
-#define YEL "\033[93;m"
-#define WHITE "\033[0;m"
-#define RESET "\033[0;m"
+
+#define GREEN "\33[0;32m"
+#define YEL "\33[93m"
+#define WHITE "\33[0m"
+#define RESET "\33[0m"
+
+typedef struct s_nbletter
+{
+ 	int	nb_occurence;
+ 	int nb_green;
+	int	nb_yellow;
+} t_nbletter;
 
 int string_all_lower(std::string line)
 {
@@ -34,11 +40,21 @@ int string_all_lower(std::string line)
 	i = 0;
 	while (i < 5)
 	{
-		if (!islower(line[i]) && line[i] != '\n')
+		if (!islower(line[i]))
 			return (0);
 		i++;
 	}
 	return (1);
+}
+
+void	ft_print_display(std::vector<std::string> tab)
+{
+	std::cout << " *************" << std::endl;
+	for (int i = 0; i < 5; i++)
+	{
+		std::cout << " * " << tab[i].c_str()  << " * " << std::endl;
+	}
+	std::cout << " *************" << std::endl;
 }
 
 int ft_is_in_dico(std::set<std::string> possible_words, std::string word)
@@ -48,99 +64,138 @@ int ft_is_in_dico(std::set<std::string> possible_words, std::string word)
 	return (0);
 }
 
-<<<<<<< HEAD
-void	ft_print_display(std::vector<std::string> tab)
-{
-	std::cout << " *************" << std::endl;
-	for (int i = 0; i < 5; i++)
-	{
-		std::cout << " * " << tab[i] << std::endl << " * ";
-	}
-	std::cout << " *************" << std::endl;
-}
 
-void	ft_game_loop(std::set<std::string> possible_words, std::vector<std::string> win_words)
-{
-	int							nb_tours;
-	std::vector<std::string>	tab;
-	std::string					word;
-	std::string					hidden;
-=======
-int	ft_nbr_occurences(char c, std::string widden)
+
+
+
+int	ft_nbr_occurences(char c, std::string hidden)
 {
 	int nbr;
 	int i;
 
 	nbr = 0;
 	i = 0;
-	while (widden[i])
+	while (hidden[i])
 	{
-		if (widden[i] == c)
+		if (hidden[i] == c)
 			nbr++;
 		i++;
 	}
 	return (nbr);
 }
 
-int ft_letter_in_widden(std::string word, std::string widden, int i, int *found_already)
+void	feed_info(t_nbletter info[256], std::string word, std::string hidden)
 {
-	int j;
+	int	i = 0;
 
-	j = 0;
-	while (widden[j])
+	while (i < 5)
 	{
-		if (widden[j] == word[i] && *found_already <= ft_nbr_occurences(word[i], ft_letter_in_widden))
-		{
-			*found_already++;
+		info[(int)word[i]].nb_occurence = ft_nbr_occurences(word[i], hidden);
+		if (word[i] == hidden[i])
+			info[(int)word[i]].nb_green++;
+		i++;
+	}
+	for (int j = 0; j < 256; j++)
+	{
+		info[j].nb_yellow = info[j].nb_occurence - info[j].nb_green;
+	}
+}
+
+int	is_in_str(char c, std::string hidden)
+{
+	int i;
+
+	i = 0;
+	while (hidden[i])
+	{
+		if (hidden[i] == c)
 			return (1);
-		}
-		j++;
+		i++;
 	}
 	return (0);
 }
 
-std::string ft_color_letters(std::string word, std::string widden)
+std::string	create_str(t_nbletter info[256], std::string word, std::string hidden)
 {
-	int i;
-	int found_already;
 	std::string res;
+	int i = 0;
 
-	found_already = 0;
-	i = 0;
 	while (i < 5)
 	{
-		if (word[i] == widden[i])
-			res = res + GREEN + word[i] + RESET;
-		else if (ft_letter_in_widden(word, widden, i, &found_already))
-			res = res + YEL + word[i] + RESET;
+		if (word[i] == hidden[i])
+			res = res + GREEN + (char)toupper(word[i]) + RESET;
+		else if (is_in_str(word[i], hidden) && info[(int)word[i]].nb_yellow > 0)
+		{
+			res = res + YEL + (char)toupper(word[i]) + RESET;
+			info[(int)word[i]].nb_yellow--;
+		}
+		else
+			res = res + (char)toupper(word[i]);
+		if (i < 4)
+			res = res + " ";
 		i++;
 	}
 	return (res);
 }
 
-void ft_game_loop(std::set<std::string> possible_words, std::set<std::string> win_words)
+std::string ft_color_letters(std::string word, std::string hidden)
 {
-	int nb_tours;
-	std::vector<std::string> tab;
-	std::string word;
->>>>>>> 54e4a5afe4b1e1b3fb152566c74be0159cc7fb52
+	t_nbletter info[256];
+	
+	for (int j = 0; j < 256; j++)
+	{
+		info[j].nb_occurence = 0;
+		info[j].nb_green = 0;
+		info[j].nb_yellow = 0;
+	}
+	feed_info(info, word, hidden);
+	return (create_str(info, word, hidden));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void ft_game_loop(std::set<std::string> possible_words, std::vector<std::string> win_words)
+{
+	int							nb_tours;
+	std::vector<std::string>	tab;
+	std::string					word;
+	std::string					hidden;
 
 	nb_tours = 0;
 	for (int i = 0; i < 6; i++)
 	{
 		tab.push_back("- - - - -");
 	}
+	srand (time(NULL));
 	nb_tours = 0;
 	hidden = win_words[rand() % (win_words.size() - 1)];
 	possible_words.insert(hidden);
-	while (nb_tours < 6)
+	while (nb_tours < 5)
 	{
 		ft_print_display(tab);
 		std::cout << "\nEnter a word (5 letters, lowercase): ";
-		getline(std::cin, word);
+		if (!getline(std::cin, word))
+		{
+			std::cout << "\nVery bad problem encountered" << std::endl;
+			return ;
+		}
+		for (int i = 0; i < (int)word.size(); i++)
+		{
+			word[i] = (char)tolower(word[i]);
+		}
 		if (word.size() != 5 || !ft_is_in_dico(possible_words, word))
 		{
 			std::cout << "Invalid word" << std::endl;
+	
 			continue;
 		}
 		tab[nb_tours] = ft_color_letters(word, hidden);
@@ -149,30 +204,18 @@ void ft_game_loop(std::set<std::string> possible_words, std::set<std::string> wi
 			ft_print_display(tab);
 			std::cout << "\nCONGRATULATION : YOU WIN !!!!!!!" << std::endl;
 			return ;
-		}l
+		}
 		nb_tours++;
 	}
-<<<<<<< HEAD
 	std::cout << "\nSory : you lose\n The word has :" << hidden << std::endl;
-=======
->>>>>>> 54e4a5afe4b1e1b3fb152566c74be0159cc7fb52
 }
 
 int main(int ac, char **av)
 {
-<<<<<<< HEAD
 	std::ifstream				ifs;
 	std::string					line;
 	std::vector<std::string>	win_words;
 	std::set<std::string>		possible_words;
-	int							i;
-=======
-	std::ifstream ifs;
-	std::string line;
-	std::set<std::string> win_words;
-	std::set<std::string> possible_words;
-	int i;
->>>>>>> 54e4a5afe4b1e1b3fb152566c74be0159cc7fb52
 
 	/* ************************************************************************** */
 	/*					Put and check the dictionary in all words				  */
@@ -180,11 +223,11 @@ int main(int ac, char **av)
 
 	if (ac != 3)
 	{
-		std::cout << "Please lunch the Wordle with two dictionary" << std::endl;
+		std::cout << "Bad argument.\nTry that: First is possible word, second is win word" << std::endl;
 		return (1);
 	}
 
-	ifs.open(av[1]);
+	ifs.open(av[2]);
 	if (!ifs)
 	{
 		std::cout << "Bad dico" << std::endl;
@@ -192,7 +235,7 @@ int main(int ac, char **av)
 	}
 	while (getline(ifs, line))
 	{
-		if (line.size() == 5 && string_all_lower(line))
+		if (line.size() == 5 && !string_all_lower(line))
 		{
 			std::cout << "Word : '" << line << "' is not vallid word" << std::endl;
 			return (1);
@@ -206,7 +249,7 @@ int main(int ac, char **av)
 		return (1);
 	}
 
-	ifs.open(av[2]);
+	ifs.open(av[1]);
 	if (!ifs)
 	{
 		std::cout << "Bad dico" << std::endl;
@@ -214,7 +257,7 @@ int main(int ac, char **av)
 	}
 	while (getline(ifs, line))
 	{
-		if (line.size() == 5 && string_all_lower(line))
+		if (line.size() == 5 && !string_all_lower(line))
 		{
 			std::cout << "Word : '" << line << "' is not vallid word" << std::endl;
 			return (1);

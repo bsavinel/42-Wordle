@@ -6,7 +6,7 @@
 /*   By: bsavinel <bsavinel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 09:20:38 by bsavinel          #+#    #+#             */
-/*   Updated: 2022/05/14 17:10:29 by bsavinel         ###   ########.fr       */
+/*   Updated: 2022/05/14 17:28:02 by bsavinel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@
 
 
 #define GREEN "\33[0;32m"
+#define GREENB "\33[1;32m"
 #define YEL "\33[93m"
+#define YELB "\33[1;93m"
+#define REDB "\33[31;1m"
 #define WHITE "\33[0m"
 #define RESET "\33[0m"
 
@@ -123,10 +126,10 @@ std::string	create_str(t_nbletter info[256], std::string word, std::string hidde
 	while (i < 5)
 	{
 		if (word[i] == hidden[i])
-			res = res + GREEN + (char)toupper(word[i]) + RESET;
+			res = res + GREENB + (char)toupper(word[i]) + RESET;
 		else if (is_in_str(word[i], hidden) && info[(int)word[i]].nb_yellow > 0)
 		{
-			res = res + YEL + (char)toupper(word[i]) + RESET;
+			res = res + YELB + (char)toupper(word[i]) + RESET;
 			info[(int)word[i]].nb_yellow--;
 		}
 		else
@@ -182,7 +185,7 @@ void ft_game_loop(std::set<std::string> possible_words, std::vector<std::string>
 	while (nb_tours < 5)
 	{
 		ft_print_display(tab);
-		std::cout << "\nEnter a word (5 letters, lowercase): ";
+		std::cout << "\nEnter a word (5 letters): ";
 		if (!getline(std::cin, word))
 		{
 			std::cout << "\nVery bad problem encountered" << std::endl;
@@ -202,13 +205,17 @@ void ft_game_loop(std::set<std::string> possible_words, std::vector<std::string>
 		if (hidden == word)
 		{
 			ft_print_display(tab);
-			std::cout << "\nCONGRATULATION : YOU WIN !!!!!!!" << std::endl;
+			std::cout << GREENB << "\nCONGRATULATION : YOU WIN !!!!!!!" << RESET << std::endl;
 			return ;
 		}
 		nb_tours++;
 	}
-	std::cout << "\nSory : you lose\n The word has :" << hidden << std::endl;
+	std::cout << REDB << "\nSorry : you lost! :(\nThe word was : " << hidden << "\nSee you sOoOn!!!"  << RESET << std::endl;
 }
+
+
+
+
 
 int main(int ac, char **av)
 {
